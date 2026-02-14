@@ -100,3 +100,34 @@ Outputs:
    - `notebooks/02_baselines_and_backtest.ipynb`
    - `notebooks/03_deepar_masked_loss_and_value_of_instock.ipynb`
 
+## Repo Structure
+Master/
+├─ README.md
+├─ requirements.txt
+├─ .gitignore
+├─ data/
+│  ├─ raw/                 # M5 downloads (keep empty in git; add note in README)
+│  └─ processed/           # cleaned panels, feature tables (parquet/csv)
+├─ notebooks/
+│  ├─ 01_exploratory_analysis.ipynb
+│  ├─ 02_data_build_and_stockout_simulation.ipynb
+│  ├─ 03_baselines_and_backtest.ipynb
+│  └─ 04_deepar_masked_loss_and_value_of_instock.ipynb
+├─ src/
+│  ├─ __init__.py
+│  ├─ config.py            # paths, horizons, folds, OOS params, random seeds
+│  ├─ data_prep.py          # load M5, build panel, merge calendar/price, features
+│  ├─ stockout_sim.py       # generate oos flags, censor y_obs, diagnostics
+│  ├─ split.py              # rolling backtest folds
+│  ├─ metrics.py            # WAPE, RMSE, pinball (optional)
+│  ├─ baselines.py          # seasonal naive + LightGBM training/predict
+│  ├─ deepar.py             # DeepAR training/inference wrappers
+│  ├─ value.py              # counterfactual instock scenario + Δunits/Δvalue ranking
+│  └─ plots.py              # three canonical plots
+├─ reports/
+│  ├─ figures/              # exported png/pdf figures
+│  └─ tables/               # top-k ranking csv
+└─ docs/
+   └─ model_card.md         # 1-page: purpose, data, eval, limitations, next steps
+
+
