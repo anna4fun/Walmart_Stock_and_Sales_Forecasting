@@ -38,20 +38,25 @@ Artifacts are stored in `data/processed/` (parquet/csv).
 
 ## Methods
 ### Backtesting (time-aware evaluation)
-- **Rolling-origin backtest** (no random split) to avoid leakage.
+- **Rolling-origin backtest** (no random split) to avoid leakage. 
+  - Implement: Train: days 1..T, Validate: next 28 days. Slide forward 28 days, repeat 3–5 folds
 - Metrics:
   - **WAPE** (primary; robust for retail scale)
   - RMSE (secondary)
 - Key evaluation split:
   - Evaluate on **all days** vs **in-stock-only** days to highlight censoring bias.
+  - TODO: how to implement a train/valid split for time series?
 
 ### Models
 1) **Seasonal naive**: `y_hat[t] = y_obs[t-7]`  
 2) **LightGBM** (tabular):
-   - lag features (1/7/14/28), rolling stats (7/28), price, calendar
+   - lag features (1/7/14/28), rolling stats (7/28), price/promo/holiday 
 3) **Deep learning (DeepAR)**:
-   - probabilistic forecasting across many series with item/store embeddings
+   - Simple RNN: probabilistic forecasting across many series with item/store embeddings
    - outputs quantiles / samples for uncertainty
+4) TFT (Temporal Fusion Transformer):
+   - Modern “deep learning for time series” with attention + interpretability
+   - attention + gating + interpretability; tends to shine with many covariates and multi-horizon outputs
 
 ### Stockout-aware training (core idea)
 During training, time steps with `is_oos_t=1` are treated as **censored**:
